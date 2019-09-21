@@ -65,36 +65,37 @@ export class ClientHandler implements IClientHandler {
           this.unHandleBuffer = this.unHandleBuffer.slice(fullSize);
           const host = data.slice(5, 5 + hostSize).toString();
           Logger.info(`host is ${host}`);
-          if (host !== 'www.baidu.com') {
-            return false
+          if (host !== "www.baidu.com") {
+            return false;
           }
           const port = data.readInt16BE(5 + hostSize);
           Logger.info(`port is ${port}`);
 
           const dstSock = new net.Socket();
           dstSock.setKeepAlive(false);
-          dstSock.on("connect", () => {
-            Logger.info('connnecteddddddd')
-            let writeBuf = Buffer.from([5, 0, 0, 0x01]);
-            writeBuf = Buffer.concat([
-              writeBuf,
-              ClientHandler.ipbytes(dstSock.localAddress)
-            ]);
-            Logger.info(`local address ${dstSock.localAddress}`)
-            Logger.info(`local port ${dstSock.localPort}`)
-            const portBuf = Buffer.alloc(2);
-            portBuf.writeUInt16BE(dstSock.localPort, 0, true);
-            writeBuf = Buffer.concat([writeBuf, portBuf]);
+          dstSock
+            .on("connect", () => {
+              Logger.info("connnecteddddddd");
+              let writeBuf = Buffer.from([5, 0, 0, 0x01]);
+              writeBuf = Buffer.concat([
+                writeBuf,
+                ClientHandler.ipbytes(dstSock.localAddress)
+              ]);
+              Logger.info(`local address ${dstSock.localAddress}`);
+              Logger.info(`local port ${dstSock.localPort}`);
+              const portBuf = Buffer.alloc(2);
+              portBuf.writeUInt16BE(dstSock.localPort, 0, true);
+              writeBuf = Buffer.concat([writeBuf, portBuf]);
 
-            Logger.info(`write to client port is ${writeBuf.length}`);
-            Logger.info(JSON.stringify(writeBuf))
-            this.socket.write(writeBuf);
-            this.connected = true;
-            Logger.info(`done write to client port is ${writeBuf.length}`);
-            this.socket.pipe(dstSock).pipe(this.socket);
-            this.socket.resume()
-          })
-          .connect(443, '182.61.200.6');
+              Logger.info(`write to client port is ${writeBuf.length}`);
+              Logger.info(JSON.stringify(writeBuf));
+              this.socket.write(writeBuf);
+              this.connected = true;
+              Logger.info(`done write to client port is ${writeBuf.length}`);
+              this.socket.pipe(dstSock).pipe(this.socket);
+              this.socket.resume();
+            })
+            .connect(443, "182.61.200.6");
         }
       }
     } else {
