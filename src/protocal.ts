@@ -3,6 +3,17 @@ export interface IRequest {
   version: number
 
 }
+
+export interface IRequestHandler {
+  // TODO
+  version: number
+}
+
+export interface IClientHandler {
+  // TODO
+  version: number
+}
+
 export interface IResponse {
   // TODO
   version: number
@@ -11,4 +22,11 @@ export interface IResponse {
 export interface IServer {
   // TODO
   todo: number
+}
+
+export interface IServerOptions {
+  port: number,
+  timeout: number,
+  host: string
+
 }
